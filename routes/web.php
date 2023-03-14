@@ -24,31 +24,30 @@ Route::get('hie', function () {
     return view('layouts.pages.profile');
 });
 
+
 Route::group(['middleware'=>['isLoggedIn']], function(){
     Route::get('dashboard',[AuthUserController::class, 'dashboard']);
     Route::get('userinfo', [UserController::class, 'displayOrsearch']);
     Route::post('/adduser', [UserController::class, 'create']);
-    Route::get('updatedelete', [UserController::class, 'updateordelete']);
-    Route::post('update/{id}', [UserController::class, 'update']);
-    Route::post('/profileedit', [UserController::class, 'profileedit']);
+    Route::post('/addAuthor', [AuthUserController::class, 'addAuthor']);
+    Route::post('updates/{id}', [UserController::class, 'updates']);
+    Route::post('deleteuser/{id}', [UserController::class, 'delete']);
+    Route::get('profile',[AuthUserController::class, 'profile'])->name('profile');
+    Route::post('/crop', [UserController::class, 'crop'])->name('user.crop');
+    Route::post('/userinfocrop', [UserController::class, 'userinfocrop'])->name('userinfo.crop');
+    Route::post('/profileedit', [UserController::class, 'profileedit'])->name('author.change-profile-picture');
     
-    
-    Route::get('profile',[AuthUserController::class, 'profile']);
-    Route::get('icons',[AuthUserController::class, 'icons']);
-    Route::get('ui-buttons',[AuthUserController::class, 'buttons']);
-    Route::get('ui-cards',[AuthUserController::class, 'cards']);
-    Route::get('ui-forms',[AuthUserController::class, 'forms']);
-    Route::get('ui-typography',[AuthUserController::class, 'typography']);
-    Route::get('charts',[AuthUserController::class, 'charts']);  
-    
+    // category
     Route::get('category', [UserController::class, 'showcategory']);
     Route::post('/addcategory', [UserController::class, 'addcategory']);
     
     // POST 
     Route::get('post', [PostController::class, 'showpost']);
     Route::post('addpost', [PostController::class, 'addpost']);
-    Route::get('updatedeletepost', [PostController::class, 'updateordeletepost']);
+    Route::post('like', [PostController::class, 'addpost']);
+    Route::post('dislike', [PostController::class, 'addpost']);
     Route::post('updatepost/{id}', [PostController::class, 'updatepost']);
+    Route::post('deletepost/{id}', [PostController::class, 'deletepost']);
     
 });
 
@@ -61,7 +60,6 @@ Route::group(['middleware'=>['isLoggedIn']], function(){
     Route::get('registration',[AuthUserController::class, 'registration']); 
 });
 
-
 // Forgot Password
 Route::get('forgot',[AuthUserController::class, 'forgot']);
 Route::post('/forgot-password-email',[AuthUserController::class, 'forgotpwd'])->name('password.email');
@@ -71,13 +69,11 @@ Route::post('/repwd',[AuthUserController::class, 'resetpwd']);
 Route::get('changeform/{id}',[AuthUserController::class, 'changeform']);
 Route::post('change-password',[AuthUserController::class, 'changepwd']);  
 
-
-
-
 Route::group(['prefix' => '/'], function()  
 {  
     Route::get('blog',[blogController::class, 'home'])->middleware('isLoggedIn');
-    Route::get('comment/{id}', [blogController::class, 'commentpage'])->middleware('isLoggedIn');
+    Route::get('comment/{id}', [blogController::class, 'commentpage'])->middleware('isLoggedIn')->name('comment');
     Route::post('addcomment', [PostController::class, 'addcomment'])->middleware('isLoggedIn');
 });  
+
 ?>

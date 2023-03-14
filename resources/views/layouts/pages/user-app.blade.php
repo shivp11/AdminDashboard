@@ -7,7 +7,7 @@
           <div class="alert alert-success">{{ Session::get('success') }}</div>            
           @endif
           @if (Session::has('failed'))
-          <div class="alert alert-success">{{ Session::get('failed') }}</div>            
+          <div class="alert alert-danger">{{ Session::get('failed') }}</div>            
           @endif
                     {{-- Navbar search --}}
                     <nav class="navbar navbar-expand-lg bg-body-tertiary p-1">
@@ -35,28 +35,35 @@
                       <div class="col-xs-6">
                         <br>
                         <table id="userData" class="table table-bordered table-hover">
-                            <thead class="table-dark text-center">
+                            <thead class="table-primary text-center">
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Image</th>
-                                    <th>Edit</th>
-                                    <th>Delete</th>
+                                  <th>Name</th>
+                                  <th>Email</th>
+                                  <th>Role</th>
+                                  <th class="d-none">Id</th>
+                                  <th>Image</th>
+                                  <th class="d-none">Show Image</th>
+                                  <th>Edit</th>
+                                  <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody  class="table-group-divider">
                     
                             @foreach ($users as $user)
-                                <tr><form action="updatedelete" method="get">
                                     <input type="hidden" name="id" value="{{ $user->id }}">
-                                    <td><input type="hidden" name="name" value="{{ $user->name }}">{{ $user->name }}</td>
-                                    <td><input type="hidden" name="email" value="{{ $user->email }}">{{ $user->email }}</td>
-                                    <td><input type="hidden" name="role" value="{{ $user->role }}">{{ $user->role }}</td>
-                                    <td class="text-center"><img src="{{ asset('images/' . $user->profile) }}" class="img-fluid rounded mb-2" width="100" height="100"/></td>
-                                    <td><div class="text-center"><button class="btn btn-primary" type="submit" name="edit" value="Edit">Edit</button></div></td>
-                                    <td><div class="text-center"><button  class="btn btn-danger" type="submit" name="delete" value="Delete">Delete</button></div></td>
-                                </form>
+                                    <td>{{ $user->name }}</td>
+                                    <td>{{ $user->email }}</td>
+                                    <td>{{ $user->role }}</td>
+                                    <td class="d-none">{{ $user->id }}</td>
+                                    <td class="text-center"><img src="{{ asset('images/' . $user->profile) }}" class="img-fluid rounded mb-2" width="80" height="80"/></td>
+                                    <td class="d-none">{{ $user->profile }}</td>
+                                    <td><div class="text-center">
+                                      <a href="#" class="btn btn-primary edit" type="button">Edit</a>
+                                    </div></td>
+                                    <td><div class="text-center">
+                                      <a href="#" class="btn btn-danger delete" type="button">Delete</a>
+                                    </div></td>
+                                    
                                 </tr>
                             @endforeach
                     
@@ -68,7 +75,7 @@
                   <div class="modal" id="modal_todo">
                     <div class="modal-dialog">
                       <div class="modal-content">
-                        <form class="form-control" action="/adduser" method="post" enctype="multipart/form-data"> 
+                        <form class="form-control" action="/addAuthor" method="post" enctype="multipart/form-data"> 
                             @csrf
                         <div class="modal-header">
                             <h4 class="modal-title" id="model_title">Add User</h4>
@@ -77,16 +84,59 @@
                         <!-- Modal body -->
                         <div class="modal-body">
                             <div><input class="form-control" type="text" name="name" placeholder="Name" required>
+                              <span class="text-danger">@error('name') {{ $message }}@enderror</span>
                             </div><br>
-                            <div><input class="form-control" type="email" name="email" placeholder="Email">
+                            <div><input class="form-control" type="email" name="email" placeholder="Email" required>
+                              <span class="text-danger">@error('email') {{ $message }}@enderror</span>
                             </div><br>
                             <div><input class="form-control" type="text" name="role"  placeholder="Role" required>
-              
+                              <span class="text-danger">@error('role') {{ $message }}@enderror</span>
                             </div><br>
-                            <div><input class="form-control" type="password" name="password" placeholder="Password" required>
+                            {{-- <div><input class="form-control" type="password" name="password" placeholder="Password" >
 
                             </div><br>
-                            <div><input class="form-control" type="file" name="profile" required><br>
+                            <div><input class="form-control" type="file" name="profile" ><br>
+                        </div> --}}
+                  
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                      </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {{-- Edit User --}}
+                  <div class="modal" id="editModal">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <form class="form-control" id="editForm" action="{{ '/updates/' }}" method="post" enctype="multipart/form-data"> 
+                            @csrf
+                            {{-- @method('PUT') --}}
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="model_title">Edit User</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <div><input class="form-control" type="text" id="name" name="name" placeholder="Name">
+                            </div><br>
+                            <div><input class="form-control" type="email" id="email" name="email" placeholder="Email">
+                            </div><br>
+                            <div>
+                              <select name="role" id="role">
+                                <option value="Admin">Admin</option>  
+                                <option value="Subscriber">Subscriber</option>  
+                              </select>
+                            </div><br>
+                            {{-- <div class="mb-3">
+                              <label class="form-label">Profile Image</label><br>
+                              <img src="{{ asset('images/' ) }}" id="profile" class="rounded" width="60" height="60"><br>
+                            </div> --}}
+                            <div><input class="form-control" type="file" name="profile"><br>
                         </div>
                   
                         <!-- Modal footer -->
@@ -99,13 +149,100 @@
                     </div>
                   </div>
                 </div>
+
+                {{-- delete User --}}
+                  <div class="modal" id="deleteModal">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <form class="form-control" id="deleteForm" action="" method="post" enctype="multipart/form-data"> 
+                            @csrf
+                            {{-- @method('PUT') --}}
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="model_title">Delete User</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <input class="form-control" type="hidden" id="id" name="id">
+                            <p>Are you Sure !!! you want to Delete this User ?</p>
+                        </div>
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Delete</button>
+                        </div>
+                      </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </main>
-              <script src="js/app.js"></script>
+              <script src="js/app.js"></script> 
+
+      <script type="text/javascript">
+      $(document).ready(function(){
+
+        var table = $('#userData').DataTable({
+          order: [[5, 'desc']],
+          "aLengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
+          "pageLength": 5,
+          retrieve: true,
+        });
+        
+        table.on('click', '.edit', function(){
+          $tr = $(this).closest('tr');
+          if($($tr).hasClass('child')){
+            $tr = $tr.prev('.parent');
+          }
+          var data = table.row($tr).data();
+          console.log(data);
+
+          $('#name').val(data[0]);
+          $('#email').val(data[1]);
+          $('#role').val(data[2]);
+          $('#profile').val(data[5]);
+
+          $('#editForm').attr('action', '/updates/'+data[3]);
+          $('#editModal').modal('show');
+          
+        })
+      })
+      </script>
+
+      {{-- Delete User Script --}}
+      <script type="text/javascript">
+      $(document).ready(function(){
+
+        var table = $('#userData').DataTable({
+          order: [[5, 'desc']],
+          "aLengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
+          "pageLength": 5,
+          retrieve: true,
+        });
+        
+        table.on('click', '.delete', function(){
+          $tr = $(this).closest('tr');
+          if($($tr).hasClass('child')){
+            $tr = $tr.prev('.parent');
+          }
+          var data = table.row($tr).data();
+          console.log(data);
+
+          $('#id').val(data[3]);
+
+          $('#deleteForm').attr('action', '/deleteuser/'+data[3]);
+          $('#deleteModal').modal('show');
+          
+        })
+      })
+      </script>
       <script>$(document).ready(function () {
         $('#userData').DataTable({
+          retrieve: true,
           order: [[5, 'desc']],
           "aLengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
           "pageLength": 5
         });
       });</script>
+      
 @include('layouts.footer')

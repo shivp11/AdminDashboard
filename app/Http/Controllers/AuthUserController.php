@@ -3,18 +3,16 @@
 namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\comment;
+use App\Models\Post;
+use App\Models\Comment;
+use Nette\Utils\Random;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\password_reset;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-// use Intervention\Image\Facades\Image;
-use Intervention\Image\ImageManagerStatic as Image;
-
 
 class AuthUserController extends Controller
 {
@@ -63,9 +61,14 @@ class AuthUserController extends Controller
 
         $user = User::where('email', '=', $req->email)->first();
         if($user){
+            
             if(Hash::check($req->password, $user->password)){
                 $req->session()->put('loginId', $user->id);
-                return redirect('dashboard');
+                if($user->role == 'Admin'){
+                    return redirect('dashboard');
+                }else{
+                    return redirect('profile');
+                }
             }else{
                 return back()->with('failed', 'Password is not match!!');
             }
@@ -74,7 +77,45 @@ class AuthUserController extends Controller
         }
     }
 
-    
+        public function addAuthor(Request $req){    
+        $req->validate([
+            'name'=>'required',
+            'role'=>'required',
+            'email'=>'required|email|unique:users',
+        ]);
+            
+          $default_password = Random::generate(8);
+
+          $user = new User();
+          $user->name = $req->name;
+          $user->email = $req->email;
+          $user->role = $req->role;
+          $user->password = Hash::make($default_password);
+          $result = $user->save();
+
+          $data = array(
+             'name' => $req->name,
+             'email'=>$req->email,
+             'password'=> $default_password,
+             'url'=> route('profile'),
+          );
+
+          $user_email = $req->email;
+          $user_name = $req->name;
+
+          if($result){
+
+            Mail::send('new-author-email-template', $data, function($message) use ($user_email, $user_name){
+                 $message->from('shivpatel19@gnu.ac.in','Larablog');
+                 $message->to($user_email,$user_name)
+                         ->subject('Account creation');
+            });
+                return back()->with('success', 'User Successfull Created!!!');
+            }else{
+                return back()->with('failed', 'Something went wrong');
+            }
+    }
+
     function profile(){
         $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
         return view('layouts.pages.pages-profile', compact('data'));
@@ -84,8 +125,9 @@ class AuthUserController extends Controller
 
         $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
         $usercount = User::all()->count();
+        $postcount = Post::all()->count();
         $commentcount = Comment::all()->count();
-        return view('dashboard', compact('data', 'usercount', 'commentcount'));
+        return view('dashboard', compact('data', 'usercount', 'commentcount', 'postcount'));
     }
 
 
@@ -130,6 +172,8 @@ class AuthUserController extends Controller
 
     function forgotpwd(Request $req)
     {
+        $checkemail = User::where('email', $req->email)->first();
+        if($checkemail){
         $token = base64_encode(Str::random(64));
         password_reset::create([
             'email'=>$req->email,
@@ -155,8 +199,10 @@ class AuthUserController extends Controller
             $message->to($user->email, $user->name)
                     ->subject('Reset Password');
         });
-        
         return back()->with('success', 'We sent link on your email');
+        }else{
+        return back()->with('failed', 'This email is not registrered!!');
+        }
     }
 
     function resetpwdtoken(Request $request, string $token)
@@ -190,60 +236,11 @@ class AuthUserController extends Controller
             return redirect('login')->with('success','Your password has been updated successfully. Login with your email and your new password');
         }
     }
-    
-    function icons(){
-        $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
-        return view('layouts.tools.icons-feather', compact('data'));
-    }
-
-    function buttons(){
-        $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
-        return view('layouts.tools.ui-buttons', compact('data'));
-    }
-
-    function cards(){
-        $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
-        return view('layouts.tools.ui-cards', compact('data'));
-    }
-
-    function forms(){
-        $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
-        return view('layouts.tools.ui-forms', compact('data'));
-    }
-
-    function typography(){
-        $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
-        return view('layouts.tools.ui-typography', compact('data'));
-    }
-
-    function charts(){
-        $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
-        return view('layouts.plugins.charts-chartjs', compact('data'));
-    }
-
-    function maps(){
-        $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
-        return view('layouts.plugins.maps-google', compact('data'));
-    }
-
 
     function user(){
         $users = User::all();
         $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
         return view('layouts.pages.user', compact('users', 'data'));
-    }
-
-    function changeprofile(Request $req){
-        $user = User::find($req->id);    
-        if($req->hasfile('changeAuthorPictureFile')){
-            $image = $req->file('changeAuthorPictureFile')->resize(100, 100);
-            $img_name = $image->getClientOriginalName();
-            $image->move(public_path('images/upadated'),$img_name);   
-            $user->profile = $img_name;
-        }
-        $user->save();
-        return 'hi';
-
     }
 }
 ?>

@@ -1,9 +1,7 @@
 @include('layouts.header')
 
 <main class="content">
-    <div class="container-fluid p-0">
-
-
+    <div class="container-fluid">
         @foreach ($posts as $post)
         <!-- Blog Post -->
         <h2>
@@ -23,5 +21,14 @@
 
 </div>
 </main>
+
+<script>$(document).ready(function () {
+    $('#postData').DataTable({
+      retrieve: true,
+      order: [[5, 'desc']],
+      "aLengthMenu": [[5, 10, 15, -1], [5, 10, 15, "All"]],
+      "pageLength": 5
+    });
+  });</script>
 <script src="js/app.js"></script>
 @include('layouts.footer')

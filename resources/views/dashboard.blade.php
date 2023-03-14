@@ -269,6 +269,8 @@
 					</div>
 
 				</div>
+
+		
 			</main>
 
 			@include('layouts.footer')
@@ -381,7 +383,7 @@
 			new Chart(document.getElementById("chartjs-dashboard-bar"), {
 				type: "bar",
 				data: {
-					labels: ["Users", "Comments", "Other"],
+					labels: ["Users", "Comments", "Posts"],
 					datasets: [{
 						label: "Data",
 						backgroundColor: window.theme.primary,

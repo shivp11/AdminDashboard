@@ -21,9 +21,16 @@
                         {{ Session::get('success') }}
                     </div>
                 @endif 
+        @if(Session::get('failed'))
+                    <div class="alert alert-danger">
+                        {{ Session::get('failed') }}
+                    </div>
+                @endif 
         @csrf
         <div class="txt_field">
-          <input type="email" name="email" placeholder="Email" required>
+          <input type="email" name="email" placeholder="Email">
+          <span class="text-danger">@error('email') {{ $message }}@enderror</span>
+
         </div>
         <div class="signup_link">
             <input type="submit" value="Send Reset link">
