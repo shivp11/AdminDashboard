@@ -71,14 +71,14 @@
             <img class="img-fluid rounded mb-2" width="40" height="40" src="{{ asset('images/comments/' . $comment->comment_image) }}">
         </a>
         <div class="media-body">
-            <input type="hidden" id="comment_id" value="{{ $comment->comment_id }}">
+            {{-- <input type="hidden" class="comment_id" value="{{ $comment->comment_id }}"> --}}
             <h4 class="media-heading">{{ $comment->comment_author }}
                 <small>{{ $comment->comment_date }}</small>
             </h4>
             {{ $comment->comment_content }}
             <br>
             <a href="#" class="me-2"><i class="fa fa-thumbs-up me-1"></i>10</a>
-            <a href="#" class="me-2 .new" id="reply">Reply</a>
+            <a class="reply" id="reply" name="reply" onclick="display({{$comment->comment_id}});">Reply</a>
         </div>
            @endforeach
     </div>
@@ -179,13 +179,18 @@
 
 
 
-<script>
+<script type="text/javascript">
 
-$('#reply').click(function() {
-    var id = $('#comment_id').val();
-    alert(id)
-    console.log(id);
-});
+// $('.reply').click(function() {
+//     var id = $('.comment_id').val();
+//     alert(id)
+//     console.log(id);
+// });
+
+    function display(id) {
+        alert(id);
+        console.log(id);
+    }
 </script>
 
 </main>
