@@ -2,6 +2,12 @@
 
 <main class="content">
     <div class="container-fluid">
+      @if (Session::has('success'))
+      <div class="alert alert-success">{{ Session::get('success') }}</div>            
+      @endif
+      @if (Session::has('failed'))
+      <div class="alert alert-danger">{{ Session::get('failed') }}</div>            
+      @endif
         @foreach ($posts as $post)
         <!-- Blog Post -->
         <h2>

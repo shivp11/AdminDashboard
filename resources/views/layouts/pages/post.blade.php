@@ -1,31 +1,16 @@
 @include('layouts.header')
             <main class="content">
+              <button type="button" class="btn btn-primary mt-0 mb-3" id="open" style="float: right;" data-bs-toggle="modal" data-bs-target="#modal_todo">
+                <i data-feather="plus"></i>  Add Post
+              </button>
 				<div class="container-fluid p-0">
 
-                    @if (Session::has('success'))
-          <div class="alert alert-success">{{ Session::get('success') }}</div>            
+          @if (Session::has('success'))
+          <div class="alert alert-success" style="width: 25%">{{ Session::get('success') }}</div>            
           @endif
           @if (Session::has('failed'))
-          <div class="alert alert-success">{{ Session::get('failed') }}</div>            
+          <div class="alert alert-success" style="width: 25%">{{ Session::get('failed') }}</div>            
           @endif
-                    {{-- Navbar search --}}
-                    <nav class="navbar navbar-expand-lg bg-body-tertiary p-1">
-                        <div class="container-fluid">
-                          <h3>View Posts</h3>
-                          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                          </button>
-                          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                              <li class="nav-item">
-                              </li>
-                            </ul>
-                            <form action="" class="d-flex" role="search">
-                              <input class="btn btn-primary" aria-current="page" data-bs-toggle="modal" data-bs-target="#modal_todo" type="button" value="Add Post"/></button>
-                            </form>
-                          </div>
-                        </div>
-                      </nav>
                       
                       {{-- User Info Table --}}
                       <div class="col-xs-6">
@@ -67,7 +52,7 @@
                   </div>
                 
                 {{-- Add Post --}}
-                  <div class="modal" id="modal_todo">
+                  <div class="modal" id="modal_todo" id="myForm">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <form class="form-control" action="/addpost" method="post" enctype="multipart/form-data"> 
@@ -82,11 +67,13 @@
                             <div><input class="form-control" type="hidden" name="user_id" value="{{ $data->id }}"></div>
                             <div>
                               <label for="">Post Title</label>
-                              <input class="form-control" type="text" name="post_title" placeholder="Post Title"></div><br>
+                              <input class="form-control" type="text" name="post_title" placeholder="Post Title" required>
+                              {{-- <span class="text-danger">@error('post_title') {{ $message }}@enderror</span></div><br> --}}
                             <div>
                               <label for="">Post Author</label>
-                              <input class="form-control" type="text" name="post_author" placeholder="Post Author" value="{{ $data->name }}" disabled></div>
-                            <div><label class="d-none" for="">Post Status</label></div>
+                              <input class="form-control" type="text" name="post_author" placeholder="Post Author" value="{{ $data->name }}" readonly></div>
+                              {{-- <span class="text-danger">@error('post_author') {{ $message }}@enderror</span> --}}
+                              <div><label class="d-none" for="">Post Status</label></div>
                             <div>
                               <select class="d-none" name="post_status" id="post_status">
                                 <option value="Pending">Approve</option>  
@@ -95,15 +82,16 @@
                             </div><br>
                             <div>
                               <label for="">Post Image</label>
-                              <input class="form-control" class="form-control" type="file" name="post_image" required></div><br>
+                              <input class="form-control" class="form-control" type="file" name="post_image" ></div><br>
                             <div><label for="summernote">Post Content</label>
-                            <textarea class="form-control" name="post_content" id="summernote" cols="30" rows="10"></textarea></div>
-                        </div>
+                            <textarea class="form-control" name="post_content" id="summernote" cols="30" rows="10" required></textarea></div>
+                            {{-- <span class="text-danger">@error('post_content') {{ $message }}@enderror</span> --}}
+                          </div>
                   
                         <!-- Modal footer -->
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                          <button type="submit" class="btn btn-primary">Submit</button>
+                          <button type="submit" class="btn btn-primary" onclick="myFunction()">Submit</button>
                         </div>
                       </form>
                       </div>
@@ -164,7 +152,7 @@
                           </div>
                         <!-- Modal body -->
                         <div class="modal-body">
-                          <input class="form-control" type="hidden" id="id" name="id">
+                          <input class="form-control" type="text" id="id3" name="id">
                           <p>Are you Sure !!! you want to Delete this User ?</p>
                         </div>
                   
@@ -179,6 +167,12 @@
                   </div>
 			</main>
       <script src="js/app.js"></script>
+
+      <script>
+        function myFunction() {
+          $('myForm').trigger('reset');
+        }
+        </script>
 
       <script type="text/javascript">
         $(document).ready(function(){
@@ -229,7 +223,7 @@
             var data = table.row($tr).data();
             console.log(data);
 
-            $('#id').val(data[0]);;
+            $('#id3').val(data[0]);;
   
             $('#deleteForm').attr('action', '/deletepost/'+data[0]);
             $('#deleteModal').modal('show');

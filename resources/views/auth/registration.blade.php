@@ -29,10 +29,10 @@
             <input type="email" name="email" value="{{ old('email') }}" placeholder="Email">
             <span class="text-danger">@error('email') {{ $message }}@enderror</span>
           </div>
-          <div class="txt_field">
+          <div class="d-none">
             {{-- <input type="text" id="role" name="role" value="role"> --}}
-            <select name="role" id="role">
-              <option value="Admin">Admin</option>  
+            <select class="d-none" name="role" id="role">
+              <option value="Subscriber">Admin</option>  
               <option value="Subscriber">Subscriber</option>  
             </select>
             <span class="text-danger">@error('role') {{ $message }}@enderror</span>
@@ -41,8 +41,8 @@
             <input type="password" name="password" value="{{ old('password') }}" placeholder="Password">
             <span class="text-danger">@error('password') {{ $message }}@enderror</span>
             
-            <div class="txt_field">
-                <input type="file" name="profile" value="{{ old('profile') }}">
+            <div class="d-none">
+                <input type="file" name="profile">
                 <span class="text-danger">@error('profile') {{ $message }}@enderror</span>
             </div>
         </div>

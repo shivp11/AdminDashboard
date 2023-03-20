@@ -22,39 +22,71 @@ class PostController extends Controller
         return view('layouts.pages.post', compact('users', 'data'));
     }
 
+    public function postcomment(Request $req)
+    {
+        $users = Post::all();
+        $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
+        return view('layouts.pages.post-comment', compact('users', 'data'));
+    }
+
+    public function viewcomments(Request $req, $id)
+    {
+        $users = Post::all();
+        $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
+        return view('layouts.pages.comment-show', compact('users', 'data', 'comment'));
+    }
+
     public function addpost(Request $req)
     {
-
-        $image = $req->post_image;
-        $img_name = $image->getClientOriginalName();
-        $image->move(public_path('images/post'), $img_name);
+        $req->validate([
+            'post_title' => 'required',
+            'post_author' => 'required',
+            'post_content' => 'required',
+        ]);
+        // print json_encode($req->post_author);exit;
+        // $image = $req->post_image;
+        // $img_name = $image->getClientOriginalName();
+        // $image->move(public_path('images/post'), $img_name);
 
         $post = new post();
-        $post->post_title = $req->post_title;
         $post->user_id = $req->user_id;
+        $post->post_title = $req->post_title;
         $post->post_author = $req->post_author;
         $post->post_status = $req->post_status;
-        $post->post_image = $img_name;
         $post->post_content = $req->post_content;
         $post->post_date = Carbon::now();
+        if ($req->hasfile('post_image')) {
+            $image = $req->file('post_image');
+            $img_name = $image->getClientOriginalName();
+            $image->move(public_path('images/post/'), $img_name);
+            $post->post_image = $img_name;
+        } else {
+            $defaultImg = 'default-post.jpg';
+            $post->post_image = $defaultImg;
+        }
         $result = $post->save();
 
         if ($result) {
-            return back()->with('success', 'Post Created!!!');
+            return redirect()->back()->with('success', 'Post Created!!!');
         } else {
-            return back()->with('failed', 'Something Wrong!!!');
+            return redirect()->back()->with('failed', 'Something Wrong!!!');
         }
     }
 
     public function updatepost(Request $req, $id)
     {
+        $req->validate([
+            'post_title' => 'required',
+            'post_author' => 'required',
+            'post_content' => 'required',
+        ]);
+
         $post = post::find($id);
         $post->post_title = $req->post_title;
         $post->post_author = $req->post_author;
         $post->post_status = $req->post_status;
         $post->post_content = $req->post_content;
         $post->post_date = Carbon::now();
-
         if ($req->hasfile('post_image')) {
             $image = $req->file('post_image');
             $img_name = $image->getClientOriginalName();
@@ -71,7 +103,7 @@ class PostController extends Controller
 
     public function deletepost(Request $req, $id)
     {
-        $post = post::find($id)->first();
+        $post = post::where('id', '=', $id)->first();
         $result = $post->delete();
         if ($result) {
             return redirect('post')->with('success', 'Post Deleted');
@@ -90,7 +122,8 @@ class PostController extends Controller
         ]);
 
         $comment = new comment();
-        $comment->comment_post_id = $req->comment_post_id;
+        $comment->user_id = $req->user_id;
+        $comment->post_id = $req->comment_post_id;
         $comment->comment_author = $req->comment_author;
         $comment->comment_email = $req->comment_email;
         $comment->comment_content = $req->comment_content;
@@ -100,7 +133,7 @@ class PostController extends Controller
         $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
         if ($result) {
             $post_comment = Post::where('id', '=', $req->comment_post_id)->first();
-            $comments = comment::where('comment_post_id', '=', $req->comment_post_id)->get();
+            $comments = comment::where('post_id', '=', $req->comment_post_id)->get();
             return back()->with('success', 'Commented!!!', compact('post_comment', 'comments', 'data'));
         } else {
             return back()->with('failed', 'Something Wrong!!!');
@@ -120,7 +153,7 @@ class PostController extends Controller
         }
 
         $comment = comment::where('comment_id', '=', $id)->get();
-        $comment_post_id = $comment[0]['comment_post_id'];
+        $comment_post_id = $comment[0]['post_id'];
 
         $replycomment = new replycomment();
         $replycomment->comment_id = $id;
@@ -133,13 +166,12 @@ class PostController extends Controller
         if ($result) {
             $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
             $post_comment = Post::where('id', '=', $req->comment_post_id)->first();
-            $comments = comment::where('comment_post_id', '=', $req->comment_post_id)->get();
+            $comments = comment::where('post_id', '=', $req->comment_post_id)->get();
             $replycomments = replycomment::where('post_id', '=', $comment_post_id)->get();
             return back()->with('success', 'Commented!!!', compact('post_comment', 'comments', 'data', 'replycomments'));
         } else {
             return back()->with('failed', 'Something Wrong!!!');
         }
-
     }
 
     public function rereplycomment(Request $req, $id)
@@ -170,7 +202,7 @@ class PostController extends Controller
         if ($result) {
             $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
             $post_comment = Post::where('id', '=', $recpost_id)->first();
-            $comments = comment::where('comment_post_id', '=', $recpost_id)->get();
+            $comments = comment::where('post_id', '=', $recpost_id)->get();
             $replycomments = replycomment::where('post_id', '=', $recpost_id)->get();
             $rereplycomments = rereplycomment::where('post_id', '=', $recpost_id)->get();
             return back()->with('success', 'Commented!!!', compact('post_comment', 'comments', 'data', 'replycomments', 'rereplycomments'));
@@ -179,7 +211,6 @@ class PostController extends Controller
         }
 
         return $recpost_id;
-
     }
 
     public function like(Request $req, $id)
@@ -281,15 +312,14 @@ class PostController extends Controller
                     return back()->with('failed', 'Something Wrong!!!');
                 }
             }
-
-        }else{
+        } else {
             $userid = $user[0]['user_id'];
-            if(Session()->get('loginId') == $userid){
-                    // echo $user_id;
-                    // echo $liketable;
-                    // echo Session()->get('loginId');
-                    return back()->with('failed', 'You already disliked!!!');
-                }
+            if (Session()->get('loginId') == $userid) {
+                // echo $user_id;
+                // echo $liketable;
+                // echo Session()->get('loginId');
+                return back()->with('failed', 'You already disliked!!!');
+            }
+        }
     }
-}
 }

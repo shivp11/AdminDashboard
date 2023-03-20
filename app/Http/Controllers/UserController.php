@@ -81,7 +81,6 @@ class UserController extends Controller
     {
 
         $user = User::where("id", '=', $id)->first();
-        echo $user;
         $result = $user->delete();
         if ($result) {
             return back()->with('success', 'User Deleted');

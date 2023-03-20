@@ -14,11 +14,13 @@
             <div><input class="form-control" type="hidden" name="user_id" value="{{ $data->id }}"></div>
             <div>
                 <label for="">Post Title</label>
-                <input class="form-control" type="text" name="post_title" placeholder="Post Title">
+                <input class="form-control" type="text" name="post_title" placeholder="Post Title" required>
+                {{-- <span class="text-danger">@error('post_title') {{ $message }}@enderror</span> --}}
             </div><br>
             <div>
                 <label for="">Post Author</label>
-                <input class="form-control" type="text" name="post_author" placeholder="Post Author" value="{{ $data->name }} " disabled>
+                <input class="form-control" type="text" name="post_author" placeholder="Post Author" value="{{ $data->name }}" readonly>
+                {{-- <span class="text-danger">@error('post_author') {{ $message }}@enderror</span> --}}
             </div><br>
             <div><label class="d-none" for="">Post Status</label></div>
             <div>
@@ -29,10 +31,11 @@
             </div>
             <div>
                 <label for="">Post Image</label>
-                <input class="form-control" type="file" name="post_image" required>
+                <input class="form-control" type="file" name="post_image">
             </div><br>
             <div><label for="summernote">Post Content</label>
-            <textarea class="form-control" name="post_content" id="summernote" cols="30" rows="10"></textarea></div>
+            <textarea class="form-control" name="post_content" id="summernote" cols="30" rows="10" required></textarea></div>
+            {{-- <span class="text-danger">@error('post_content') {{ $message }}@enderror</span> --}}
         </div>
   
         <!-- Modal footer -->

@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\Validator;
 
 class AuthUserController extends Controller
 {
@@ -30,22 +29,24 @@ class AuthUserController extends Controller
     function registerUser(Request $req){
         $req->validate([
             'name'=>'required',
-            'role'=>'required',
-            'profile'=>'required',
             'email'=>'required|email|unique:users',
-            'password'=>'required|min:8|max:12',
+            'password'=>'required|min:8|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
         ]);
-
-        $image = $req->profile;
-        $img_name = $image->getClientOriginalName();
-        $image->move(public_path('images'),$img_name);
-
+        
         $user = new User();
         $user->name = $req->name;
         $user->email = $req->email;
         $user->role = $req->role;
-        $user->profile = $img_name;
         $user->password = Hash::make($req->password);
+        if($req->hasfile('profile')){
+            $image = $req->profile;
+            $img_name = $image->getClientOriginalName();
+            $image->move(public_path('images'),$img_name);
+            $user->profile = $img_name;
+        }else{
+            $defaultImg = 'Profile.jpeg';
+            $user->profile = $defaultImg; 
+        }
         $result = $user->save();
 
         if($result){
@@ -96,6 +97,8 @@ class AuthUserController extends Controller
           $user->name = $req->name;
           $user->email = $req->email;
           $user->role = $req->role;
+          $defaultImg = 'Profile.jpeg';
+          $user->profile = $defaultImg; 
           $user->password = Hash::make($default_password);
           $result = $user->save();
 
@@ -142,7 +145,6 @@ class AuthUserController extends Controller
             return redirect('login');
         }
     }
-
         
     function forgot(){
         return view('auth.forgot-password');
@@ -220,7 +222,7 @@ class AuthUserController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|min:8|confirmed|regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/',
         ]);
 
         $check_token = DB::table('password_resets')->where([

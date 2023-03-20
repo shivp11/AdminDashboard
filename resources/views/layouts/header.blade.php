@@ -76,7 +76,7 @@
 					</li>
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="{{ '/blog' }}">
-			  <i class="align-middle" data-feather="book-open"></i> <span class="align-middle">Blogs</span>
+			  <i class="align-middle" data-feather="book-open"></i> <span class="align-middle">Posts</span>
 			</a>
 					</li>
 					@if ($data->role == 'Admin')
@@ -87,8 +87,13 @@
 					</li>
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="{{ '/post' }}">
-			  <i class="align-middle" data-feather="aperture"></i> <span class="align-middle">Post</span>
+			  <i class="align-middle" data-feather="aperture"></i> <span class="align-middle">Manage Post</span>
 			</a>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{{ '/postcomment' }}">
+			  <i class="align-middle" data-feather="aperture"></i> <span class="align-middle">Manage Comment</span>
+					</a>
 					</li>
 					@endif
 					@if ($data->role != 'Admin')

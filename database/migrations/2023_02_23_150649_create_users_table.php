@@ -21,13 +21,14 @@ class CreateUsersTable extends Migration
             $table->string('role');
             $table->string('password');
             $table->string('profile')->nullable();
+            // $table->timestamps('deleted_at');
             $table->rememberToken();
             $table->timestamps();
-            $table->softDeletes();
+            // $table->softDeletes();
         });
 
         Schema::table('users', function ($table) {
-            $table->softDeletes();
+            // $table->softDeletes();
         });
     }
 
@@ -41,7 +42,7 @@ class CreateUsersTable extends Migration
         Schema::dropIfExists('users');
 
         Schema::table('users', function ($table) {
-            $table->softDeletes();
+            // $table->softDeletes();
         });
     }
 }

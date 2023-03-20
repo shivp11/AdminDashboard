@@ -77,8 +77,8 @@
                         </div>
                     </div>
                 </div><br>
-                @endforeach 
             </li>
+            @endforeach
             <li style="list-style-type:none" class="mt-0 mb-0">
                 @foreach ($rereplycomments as $rereplycomment)
                 <div class="row align-items-center ">
@@ -163,6 +163,7 @@
                 <img src="{{ asset('images/' . $data->profile) }}" class="rounded-circle me-1 mt-0" width="30" height="30">
                 <input type="hidden" name="comment_post_id" value="{{ $post_comment->id }}">
                 {{-- <input type="hidden" name="comment_id" value="{{ $comment->comment_id }}"> --}}
+                <input type="hidden" name="user_id" value="{{ $data->id }}">
                 <input  type="hidden" name="comment_author" value="{{ $data->name }}">
                 <input  type="hidden" name="comment_email" value="{{ $data->email }}">
                 <input  type="hidden" name="comment_image" value="{{ $data->profile }}">
