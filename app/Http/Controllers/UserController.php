@@ -52,6 +52,12 @@ class UserController extends Controller
 
     function updates(Request $req, $id)
     {
+        $req->validate([
+            'name' => 'required',
+            'role' => 'required',
+            'email' => 'required|email',
+        ]);
+
         $user = User::find($id);
         $user->name = $req->name;
         $user->email = $req->email;

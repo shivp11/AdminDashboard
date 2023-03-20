@@ -11,13 +11,14 @@
         <!-- Modal body -->
         <div class="modal-body">
             <div><input class="form-control" type="hidden" name="id"></div>
+            <div><input class="form-control" type="hidden" name="user_id" value="{{ $data->id }}"></div>
             <div>
                 <label for="">Post Title</label>
                 <input class="form-control" type="text" name="post_title" placeholder="Post Title">
             </div><br>
             <div>
                 <label for="">Post Author</label>
-                <input class="form-control" type="text" name="post_author" placeholder="Post Author" value="{{ $data->name }}">
+                <input class="form-control" type="text" name="post_author" placeholder="Post Author" value="{{ $data->name }} " disabled>
             </div><br>
             <div><label class="d-none" for="">Post Status</label></div>
             <div>

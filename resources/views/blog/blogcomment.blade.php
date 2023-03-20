@@ -18,9 +18,15 @@
          <div class="row align-items-center">
              <div class="col-auto">
                <div class="reaction">
-                   <a href="/like" class="btn btn-success btn-sm"><i class="fa fa-thumbs-up"></i> 13</a>
-                   <a href="/dislike" class="btn btn-danger btn-sm"><i class="fa fa-thumbs-down"></i> 0</a>
-               </div>
+                <form action="{{ '/like/'.$post_comment->id  }}" method="post">
+                    @csrf
+                   <button type="submit" class="btn btn-success btn-sm" ><i class="fa fa-thumbs-up"></i> {{ $likecount }}</button>
+                </form>
+                <form action="{{ '/dislike/'.$post_comment->id  }}" method="post">
+                    @csrf
+                   <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-thumbs-down"></i> {{ $dislikecount }}</button>
+                </form>
+                </div>
              </div>
            </div>
         <hr>
@@ -29,8 +35,6 @@
     <!-- Blog Comments -->
 
     <!-- Comments Form -->
-    {{-- <div class="well"> --}}
-        {{-- <h4>Leave a Comment:</h4> --}}
             @csrf
             {{-- {{ method_field('PUT') }} --}}
             @if (Session::has('success'))
@@ -39,90 +43,63 @@
             @if (Session::has('failed'))
             <div class="alert alert-danger">{{ Session::get('failed') }}</div>            
             @endif
-            {{-- <input type="hidden" name="comment_post_id" value="{{ $post_comment->id }}">
-            <div  class="form-group">
-                <input class="form-control" type="text" name="comment_author" placeholder="Name">
-                <span class="text-danger">@error('comment_author') {{ $message }}@enderror</span>
-            </div><br>
-            <div  class="form-group">
-                <input class="form-control" type="email" name="comment_email" placeholder="Email">
-                <span class="text-danger">@error('comment_email') {{ $message }}@enderror</span>
-            </div><br>
-            <div  class="form-group">
-                <input class="form-control" type="file" name="comment_image">
-                <span class="text-danger">@error('comment_image') {{ $message }}@enderror</span>
-            </div><br>
-            <div class="form-group">
-                <label for="">Comment</label>
-                <textarea class="form-control" name="comment_content" rows="3"></textarea>
-                <span class="text-danger">@error('comment_content') {{ $message }}@enderror</span>
-            </div><br>
-
-            <button type="submit" class="btn btn-primary">Submit</button>
-    </div> --}}
-
-    {{-- <hr> --}}
-
-    <!-- Posted Comments -->
-    <!-- Comment -->
-    <div class="media">
-         @foreach ($comments as $comment)
-         <a class="pull-left" href="#">
-            <img class="img-fluid rounded mb-2" width="40" height="40" src="{{ asset('images/comments/' . $comment->comment_image) }}">
-        </a>
-        <div class="media-body">
-            {{-- <input type="hidden" class="comment_id" value="{{ $comment->comment_id }}"> --}}
-            <h4 class="media-heading">{{ $comment->comment_author }}
-                <small>{{ $comment->comment_date }}</small>
-            </h4>
-            {{ $comment->comment_content }}
-            <br>
-            <a href="#" class="me-2"><i class="fa fa-thumbs-up me-1"></i>10</a>
-            <a class="reply" id="reply" name="reply" onclick="display({{$comment->comment_id}});">Reply</a>
-        </div>
-           @endforeach
-    </div>
-    
       {{-- Comments Show --}}
-      {{-- <ul style="list-style-type:none">
-          <li style="list-style-type:none" >
+      <ul style="list-style-type:none" class="mt-0 mb-0">
+          <li style="list-style-type:none" class="mt-0 mb-0">
             @foreach ($comments as $comment)
             <div class="row align-items-center">
                 <div class="col-auto">
-                    <img src="{{ asset('images/' . $comment->comment_image) }}" class="rounded-circle mt-0" width="50" height="50"><br>
+                    <img src="{{ asset('images/' . $comment->comment_image) }}" class="rounded-circle mt-0" width="30" height="30"><br>
                 </div>
                 <div class="col">
-                    <h1 class="fs-4 mb-0">{{ $comment->comment_author }}</h1>
+                    <h1 class="fs-6 mb-0">{{ $comment->comment_author }}</h1>
                     <input type="hidden" id="comment_id" value="{{ $comment->comment_id }}">
-                    <div class="col-auto">
-                        <p class="mb-0">{{ $comment->comment_content }}</p>
-                        <a href="#" class="me-2"><i class="fa fa-thumbs-up me-1"></i>10</a>
-                        <a href="#" class="me-2 reply" id="reply" >Reply</a>
+                    <div class="col-auto fs-6">
+                        <p class="fs-6 mb-0">{{ $comment->comment_content }}</p>
+                        {{-- <a href="#" class="fs-6 me-2"><i class="fs-6 fa fa-thumbs-up me-1"></i>10</a> --}}
+                        <a href="#" class="fs-6 me-2 reply" id="reply" onclick="display({{$comment->comment_id}});"><i class="fs-6 fa fa-mail-reply me-1"></i> Reply</a>
                     </div>
                 </div>
               </div> <br>
-          <ul style="list-style-type:none">
-            <li style="list-style-type:none">
-                @foreach ($comments as $comment)
+          <ul style="list-style-type:none" class="mt-0 mb-0">
+            <li style="list-style-type:none" class="mt-0 mb-0">
+                @foreach ($replycomments as $replycomment)
                 <div class="row align-items-center ">
                     <div class="col-auto">
-                        <img src="{{ asset('images/' . $comment->comment_image) }}" class="rounded-circle mt-0" width="50" height="50"><br>
+                        <img src="{{ asset('images/' . $replycomment->reply_comment_image) }}" class="rounded-circle mt-0" width="30" height="30"><br>
                     </div>
                     <div class="col">
-                        <h1 class="fs-4 mb-0">{{ $comment->comment_author }}</h1>
-                        <div class="col-auto">
-                            <p class="mb-0">{{ $comment->comment_content }}</p>
-                            <a href="#" class="me-2"><i class="fa fa-thumbs-up me-1"></i>10</a>
-                            <a href="#" class="me-2">Reply</a>
+                        <h1 class="fs-6 mb-0">{{ $replycomment->reply_comment_author }}</h1>
+                        <div class="col-auto fs-6">
+                            <p class="fs-6 mb-0">{{ $replycomment->reply_comment_content }}</p>
+                            {{-- <a href="#" class="fs-6 me-2"><i class="fs-6 fa fa-thumbs-up me-1"></i>10</a> --}}
+                            <a  class="fs-6 me-2" onclick="recomment({{$replycomment->reply_comment_id}});"><i class="fs-6 fa fa-mail-reply me-1"></i> Reply</a>
+                        </div>
+                    </div>
+                </div><br>
+                @endforeach 
+            </li>
+            <li style="list-style-type:none" class="mt-0 mb-0">
+                @foreach ($rereplycomments as $rereplycomment)
+                <div class="row align-items-center ">
+                    <div class="col-auto">
+                        <img src="{{ asset('images/' . $rereplycomment->rereply_comment_image) }}" class="rounded-circle mt-0" width="30" height="30"><br>
+                    </div>
+                    <div class="col">
+                        <h1 class="fs-6 mb-0">{{ $rereplycomment->rereply_comment_author }}</h1>
+                        <div class="col-auto fs-6">
+                            <p class="fs-6 mb-0">{{ $rereplycomment->rereply_comment_content }}</p>
+                            {{-- <a href="#" class="fs-6 me-2"><i class="fs-6 fa fa-thumbs-up me-1"></i>10</a> --}}
+                            <a  class="fs-6 me-2" onclick="recomment({{$rereplycomment->rereply_comment_id}});"><i class="fs-6 fa fa-mail-reply me-1"></i> Reply</a>
                         </div>
                     </div>
                 </div><br>
                 @endforeach 
             </li>
           </ul>
-        </li> --}}
+        </li>
 
-        {{-- <div class="modal" id="replyModal">
+        <div class="modal" id="replyModal">
             <div class="modal-dialog">
               <div class="modal-content">
                 <form class="form-control" id="replyForm" action="" method="post" enctype="multipart/form-data"> 
@@ -130,35 +107,54 @@
                 <div class="modal-header">
                     <h4 class="modal-title" id="model_title">Reply</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div> --}}
+                  </div>
                 <!-- Modal body -->
-                {{-- <div class="modal-body">
-                    <input type="hidden" name="comment_id">
-                    <input type="hidden" name="post_id" value="{{ $post_comment->id }}">
-                    <div><input class="form-control" type="text" name="reply_comment_author" placeholder="Name" required>
-                        <span class="text-danger">@error('reply_comment_author') {{ $message }}@enderror</span>
-                      </div><br>
-                      <div><input class="form-control" type="email" name="reply_comment_email" placeholder="Email" required>
-                        <span class="text-danger">@error('reply_comment_email') {{ $message }}@enderror</span>
-                      </div><br>
-                      <div><input class="form-control" type="text" name="reply_comment_image"  placeholder="Role" required>
-                        <span class="text-danger">@error('reply_comment_image') {{ $message }}@enderror</span>
-                      </div><br>
-                </div> --}}
-          
-                <!-- Modal footer -->
-                {{-- <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Delete</button>
+                <div class="modal-body">
+                    <div class="input-group">
+                            <img src="{{ asset('images/' . $data->profile) }}" class="rounded-circle me-1 mt-0" width="30" height="30">
+                            <input type="hidden" name="post_id" value="{{ $post_comment->id }}">
+                            <input type="hidden" name="comment_id" id="comment_id2">
+                            <input  type="hidden" name="reply_comment_author" value="{{ $data->name }}">
+                            <input  type="hidden" name="reply_comment_email" value="{{ $data->email }}">
+                            <input  type="hidden" name="reply_comment_image" value="{{ $data->profile }}">
+                            <input type="text" class="rounded form-control" name="reply_comment_content" placeholder="Enter Comment" aria-label="Input group example" aria-describedby="btnGroupAddon">
+                            <button type="submit" class="btn btn-primary input-group-text" id="btnGroupAddon">Submit</button>
+                    </div>
                 </div>
               </form>
               </div>
             </div>
-          </div> --}}
+          </div>
+
+        <div class="modal" id="replycomModal">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <form class="form-control" id="replycomForm" action="" method="post" enctype="multipart/form-data"> 
+                    @csrf
+                <div class="modal-header">
+                    <h4 class="modal-title" id="model_title">Reply</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="input-group">
+                            <img src="{{ asset('images/' . $data->profile) }}" class="rounded-circle me-1 mt-0" width="30" height="30">
+                            <input type="hidden" name="comment_id" id="comment_id3">
+                            <input  type="hidden" name="rereply_comment_author" value="{{ $data->name }}">
+                            <input  type="hidden" name="rereply_comment_email" value="{{ $data->email }}">
+                            <input  type="hidden" name="rereply_comment_image" value="{{ $data->profile }}">
+                            <input type="text" class="rounded form-control" name="rereply_comment_content" placeholder="Enter Comment" aria-label="Input group example" aria-describedby="btnGroupAddon">
+                            <button type="submit" class="btn btn-primary input-group-text" id="btnGroupAddon">Submit</button>
+                    </div>
+                </div>
+              </form>
+              </div>
+            </div>
+          </div>
 
 
 
-        {{-- @endforeach   --}}
+        @endforeach  
       </ul>
       <div>
       <form action="/addcomment" method="POST" enctype="multipart/form-data" >
@@ -188,8 +184,19 @@
 // });
 
     function display(id) {
-        alert(id);
-        console.log(id);
+    $('#comment_id2').val(id);
+    // console.log(id);
+
+    $('#replyForm').attr('action', '/replycomment/'+id);
+    $('#replyModal').modal('show');
+    }
+
+    function recomment(id) {
+    $('#comment_id3').val(id);
+    // console.log(id);
+
+    $('#replycomForm').attr('action', '/rereplycomment/'+id);
+    $('#replycomModal').modal('show');
     }
 </script>
 

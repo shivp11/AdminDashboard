@@ -1,7 +1,18 @@
 @include('layouts.header')
 
 	<main class="content">
-		<div>
+		<div class="toast-container position-absolute top-1 end-0 p-3">
+			<div class="toast text-white bg-primary border-0"   role="alert" aria-live="assertive" aria-atomic="true">
+				<div class="d-flex">
+				  <div class="toast-body">
+					Profile Picture Changed!!!
+				  </div>
+				  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+				</div>
+			</div>
+		</div>
+
+		<div >
 			@if (Session::has('success'))
 			<div class="alert alert-success">{{ Session::get('success') }}</div>            
 			@endif
@@ -9,12 +20,12 @@
 			<div class="alert alert-danger">{{ Session::get('failed') }}</div>            
 			@endif
 		</div>
+		
 		<div>
-   
 			<div class="page-header">
 				<div class="row align-items-center">
 				  <div class="col-auto">
-					<img src="{{ asset('images/' . $data->profile) }}" class="rounded-circle image-previewer" width="80" height="80"><br>
+					<img src="{{ asset('images/' . $data->profile) }}" style="cursor: pointer;" class="rounded-circle image-previewer" width="80" height="80" onclick="event.preventDefault();document.getElementById('_userAvatarFile').click();"><br>
 					{{-- <span class="avatar avatar-md" style="background-image: url({{ 'images/DSC_0001.jpg' }})"></span> --}}
 				  </div>
 				  <div class="col-md-6">
@@ -30,12 +41,10 @@
 					</div>
 				  </div>
 				  <div class="col " style="text-align: right">
-					<input type="file" name="_userAvatarFile" id="_userAvatarFile" class="d-none" onchange="this.dispatchEvent(new InputEvent('input'))">
-					<a href="#" class="btn btn-primary" onclick="event.preventDefault();document.getElementById('_userAvatarFile').click();">
-					  <!-- Download SVG icon from http://tabler-icons.io/i/message -->
-					  <!-- SVG icon code -->
+					<input type="file" name="_userAvatarFile" style="pointer-events: auto;" id="_userAvatarFile" class="d-none" onchange="this.dispatchEvent(new InputEvent('input'))">
+					{{-- <a href="#" class="btn btn-primary" onclick="event.preventDefault();document.getElementById('_userAvatarFile').click();">
 					  Change Picture
-					</a>
+					</a> --}}
 				  </div>
 				</div>
 			  </div>
@@ -87,17 +96,26 @@
 										<span class="text-danger">@error('profile') {{ $message }}@enderror</span>
 									</div> --}}
 								</div>
-									<button type="submit" name="submit" class="btn btn-primary">Save Changes</button>
+									<button type="submit" name="submit" class="btn btn-primary" onclick="myFunction()" id="liveToastBtn">Save Changes</button>
 							</form>
 						</div>
 					</div>
 				</div>
 			</div>	
 		</div>	
-		
+
+
+
+
+
 	</main>
-	<script src="js/app.js"></script>
+	<script src="{{ asset('js/app.js') }}"></script>
 	<script src="{{ asset('ijaboCropTool/ijaboCropTool.min.js') }}"></script>
+	<script>
+		function myFunction() {
+			$('#savetoast').toast('show');
+		}
+	</script>
 	<script>
         $('#_userAvatarFile').ijaboCropTool({
 			type: "POST",
@@ -109,7 +127,8 @@
 			processUrl:'{{ route("user.crop") }}',
 			withCSRF:['_token','{{ csrf_token() }}'],
 			onSuccess:function(message, element, status){
-             alert(message);
+				$('.toast').toast('show');
+				// alert(message);
 			},
 			onError:function(message, element, status){
 				alert(message);

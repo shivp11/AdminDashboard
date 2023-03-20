@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Carbon\Carbon;
-use App\Models\User;
 use App\Models\Post;
+use App\Models\User;
 use App\Models\Comment;
 use Nette\Utils\Random;
 use Illuminate\Support\Str;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Validator;
 
 class AuthUserController extends Controller
 {
@@ -77,13 +79,17 @@ class AuthUserController extends Controller
         }
     }
 
-        public function addAuthor(Request $req){    
+        public function addAuthor(Request $req)
+        {    
         $req->validate([
             'name'=>'required',
             'role'=>'required',
             'email'=>'required|email|unique:users',
         ]);
             
+        if($req->email == '' || $req->email == '' || $req->role == '' ){
+            return back()->with('failed', 'Something went wrong');
+        }
           $default_password = Random::generate(8);
 
           $user = new User();
@@ -104,13 +110,12 @@ class AuthUserController extends Controller
           $user_name = $req->name;
 
           if($result){
-
             Mail::send('new-author-email-template', $data, function($message) use ($user_email, $user_name){
                  $message->from('shivpatel19@gnu.ac.in','Larablog');
                  $message->to($user_email,$user_name)
                          ->subject('Account creation');
             });
-                return back()->with('success', 'User Successfull Created!!!');
+                return back()->with('success','User Successfull Created!!!');
             }else{
                 return back()->with('failed', 'Something went wrong');
             }

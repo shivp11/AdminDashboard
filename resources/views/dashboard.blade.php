@@ -390,7 +390,7 @@
 						borderColor: window.theme.primary,
 						hoverBackgroundColor: window.theme.primary,
 						hoverBorderColor: window.theme.primary,
-						data: [{{ $usercount }}, {{ $commentcount }}, 11],
+						data: [{{ $usercount }}, {{ $commentcount }}, {{ $postcount }}],
 						barPercentage: .75,
 						categoryPercentage: .5
 					}]
@@ -407,7 +407,7 @@
 							},
 							stacked: false,
 							ticks: {
-								stepSize: 2
+								stepSize: 1
 							}
 						}],
 						xAxes: [{

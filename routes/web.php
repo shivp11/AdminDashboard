@@ -43,9 +43,7 @@ Route::group(['middleware'=>['isLoggedIn']], function(){
     
     // POST 
     Route::get('post', [PostController::class, 'showpost']);
-    Route::post('addpost', [PostController::class, 'addpost']);
-    Route::post('like', [PostController::class, 'addpost']);
-    Route::post('dislike', [PostController::class, 'addpost']);
+    Route::post('addpost', [PostController::class, 'addpost']);;
     Route::post('updatepost/{id}', [PostController::class, 'updatepost']);
     Route::post('deletepost/{id}', [PostController::class, 'deletepost']);
     
@@ -74,6 +72,10 @@ Route::group(['prefix' => '/'], function()
     Route::get('blog',[blogController::class, 'home'])->middleware('isLoggedIn');
     Route::get('comment/{id}', [blogController::class, 'commentpage'])->middleware('isLoggedIn')->name('comment');
     Route::post('addcomment', [PostController::class, 'addcomment'])->middleware('isLoggedIn');
+    Route::post('replycomment/{id}', [PostController::class, 'replycomment'])->middleware('isLoggedIn');
+    Route::post('rereplycomment/{id}', [PostController::class, 'rereplycomment'])->middleware('isLoggedIn');
+    Route::post('like/{id}', [PostController::class, 'like'])->middleware('isLoggedIn')->name('like');
+    Route::post('dislike/{id}', [PostController::class, 'dislike'])->middleware('isLoggedIn');
 });  
 
 ?>

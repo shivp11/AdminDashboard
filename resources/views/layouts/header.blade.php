@@ -9,7 +9,7 @@
 	<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
 	<meta name="author" content="AdminKit">
 	<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
-	
+	<meta name="_token" content="{{csrf_token()}}" />
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 
 	<link rel="canonical" href="https://demo-basic.adminkit.io/" />
@@ -36,7 +36,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-	<link rel="stylesheet" href="{{ asset('css/imgareaselect.css') }}">
+	<link rel="stylesheet" href="{{ asset('	css/imgareaselect.css') }}">
 	<link href="//cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css " rel="stylesheet">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.css">
@@ -115,7 +115,7 @@
               </a>
 
 							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                	<img src="{{ asset('images/' . $data->profile) }}" class="avatar img-fluid rounded me-1 image-previewer" alt="{{ $data->name }}" /> <span class="text-dark"> {{ $data->name }}</span>
+                	<img src="{{ asset('images/' . $data->profile) }}" class="avatar img-fluid rounded-circle me-1 image-previewer" alt="{{ $data->name }}" /> <span class="text-dark"> {{ $data->name }}</span>
               </a>
 							<div class="dropdown-menu dropdown-menu-end">
 								<a class="dropdown-item" href="{{ '/profile' }}"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
