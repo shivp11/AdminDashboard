@@ -44,6 +44,7 @@ Route::group(['middleware'=>['isLoggedIn']], function(){
     // POST 
     Route::get('post', [PostController::class, 'showpost']);
     Route::get('viewcomments/{id}', [PostController::class, 'viewcomments']);
+    Route::post('deletecomment/{id}', [PostController::class, 'deletecomment']);
     Route::get('postcomment', [PostController::class, 'postcomment']);
     Route::post('addpost', [PostController::class, 'addpost']);;
     Route::post('updatepost/{id}', [PostController::class, 'updatepost']);

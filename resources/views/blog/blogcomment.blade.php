@@ -16,18 +16,18 @@
          <b>Content</b> <p>{{ $post_comment->post_content }}</p>
          <hr>
          <div class="row align-items-center">
-             <div class="col-auto">
-               <div class="reaction">
-                <form action="{{ '/like/'.$post_comment->id  }}" method="post">
+               <div class="col-1 fs-1 me-0 pe-0">
+                <form action="{{ '/like/'.$post_comment->id  }}" class="fs-6" method="post">
                     @csrf
-                   <button type="submit" class="btn btn-success btn-sm" ><i class="fa fa-thumbs-up"></i> {{ $likecount }}</button>
-                </form>
-                <form action="{{ '/dislike/'.$post_comment->id  }}" method="post">
-                    @csrf
-                   <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-thumbs-down"></i> {{ $dislikecount }}</button>
+                   <button type="submit" class="btn btn-success btn fs-5" ><i class="fa fa-thumbs-up fs-6"></i> {{ $likecount }}</button>
                 </form>
                 </div>
-             </div>
+                <div class="col-1 fs-1 ms-0 ps-0">
+                <form action="{{ '/dislike/'.$post_comment->id  }}"  class="fs-6" method="post">
+                    @csrf
+                   <button type="submit" class="btn btn-danger btn fs-5"><i class="fa fa-thumbs-down fs-6"></i> {{ $dislikecount }}</button>
+                </form>
+                </div>
            </div>
         <hr>
         {{-- <br> --}}
@@ -57,13 +57,13 @@
                     <div class="col-auto fs-6">
                         <p class="fs-6 mb-0">{{ $comment->comment_content }}</p>
                         {{-- <a href="#" class="fs-6 me-2"><i class="fs-6 fa fa-thumbs-up me-1"></i>10</a> --}}
-                        <a href="#" class="fs-6 me-2 reply" id="reply" onclick="display({{$comment->comment_id}});"><i class="fs-6 fa fa-mail-reply me-1"></i> Reply</a>
+                        {{-- <a href="#" class="fs-6 me-2 reply" id="reply" onclick="display({{$comment->comment_id}});"><i class="fs-6 fa fa-mail-reply me-1"></i> Reply</a> --}}
                     </div>
                 </div>
               </div> <br>
           <ul style="list-style-type:none" class="mt-0 mb-0">
             <li style="list-style-type:none" class="mt-0 mb-0">
-                @foreach ($replycomments as $replycomment)
+                {{-- @foreach ($replycomments as $replycomment)
                 <div class="row align-items-center ">
                     <div class="col-auto">
                         <img src="{{ asset('images/' . $replycomment->reply_comment_image) }}" class="rounded-circle mt-0" width="30" height="30"><br>
@@ -72,15 +72,14 @@
                         <h1 class="fs-6 mb-0">{{ $replycomment->reply_comment_author }}</h1>
                         <div class="col-auto fs-6">
                             <p class="fs-6 mb-0">{{ $replycomment->reply_comment_content }}</p>
-                            {{-- <a href="#" class="fs-6 me-2"><i class="fs-6 fa fa-thumbs-up me-1"></i>10</a> --}}
-                            <a  class="fs-6 me-2" onclick="recomment({{$replycomment->reply_comment_id}});"><i class="fs-6 fa fa-mail-reply me-1"></i> Reply</a>
+                            <a  class="fs-6 me-2" ><i class="fs-6 fa fa-mail-reply me-1"></i> Reply</a>
                         </div>
                     </div>
                 </div><br>
+                @endforeach --}}
             </li>
-            @endforeach
             <li style="list-style-type:none" class="mt-0 mb-0">
-                @foreach ($rereplycomments as $rereplycomment)
+                {{-- @foreach ($rereplycomments as $rereplycomment)
                 <div class="row align-items-center ">
                     <div class="col-auto">
                         <img src="{{ asset('images/' . $rereplycomment->rereply_comment_image) }}" class="rounded-circle mt-0" width="30" height="30"><br>
@@ -89,12 +88,11 @@
                         <h1 class="fs-6 mb-0">{{ $rereplycomment->rereply_comment_author }}</h1>
                         <div class="col-auto fs-6">
                             <p class="fs-6 mb-0">{{ $rereplycomment->rereply_comment_content }}</p>
-                            {{-- <a href="#" class="fs-6 me-2"><i class="fs-6 fa fa-thumbs-up me-1"></i>10</a> --}}
                             <a  class="fs-6 me-2" onclick="recomment({{$rereplycomment->rereply_comment_id}});"><i class="fs-6 fa fa-mail-reply me-1"></i> Reply</a>
                         </div>
                     </div>
                 </div><br>
-                @endforeach 
+                @endforeach  --}}
             </li>
           </ul>
         </li>

@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\comment;
-use App\Models\post;
-use App\Models\postdislike;
-use App\Models\postlike;
-use App\Models\replycomment;
-use App\Models\rereplycomment;
-use App\Models\User;
 use Carbon\Carbon;
+use App\Models\post;
+use App\Models\User;
+use App\Models\comment;
+use App\Models\postlike;
+use App\Models\postdislike;
+use App\Models\replycomment;
 use Illuminate\Http\Request;
+use App\Models\rereplycomment;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -32,8 +33,10 @@ class PostController extends Controller
     public function viewcomments(Request $req, $id)
     {
         $users = Post::all();
+        // $comments = DB::table('comments as c') ->join('replycomments as rc', 'c.comment_id', '=', 'rc.comment_id') ->join('rereplycomments as rrc', 'rc.comment_id', '=', 'rrc.reply_comment_id') ->select('*') ->get();
+        $comments = comment::where('post_id', '=', $id)->get();
         $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
-        return view('layouts.pages.comment-show', compact('users', 'data', 'comment'));
+        return view('layouts.pages.comment-show', compact('users', 'data', 'comments'));
     }
 
     public function addpost(Request $req)
@@ -111,6 +114,18 @@ class PostController extends Controller
             return redirect('post')->with('failed', 'Something Wrong!!!');
         }
     }
+    public function deletecomment(Request $req, $id)
+    {
+        $comment = comment::where('comment_id', '=', $id)->delete();
+        // $result = $comment->delete();
+        if ($comment) {
+            return back()->with('success', 'Comment Deleted');
+        } else {
+            return back()->with('failed', 'Something Wrong!!!');
+        }
+    }
+
+    
 
     public function addcomment(Request $req)
     {
@@ -230,7 +245,7 @@ class PostController extends Controller
                 if ($result) {
                     $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
                     $post_comment = Post::where('id', '=', $id)->first();
-                    $comments = comment::where('comment_post_id', '=', $id)->get();
+                    $comments = comment::where('post_id', '=', $id)->get();
                     $replycomments = replycomment::where('post_id', '=', $id)->get();
                     $rereplycomments = rereplycomment::where('post_id', '=', $id)->get();
                     $likes = postlike::where('like_post_id', '=', $id)->get();
@@ -247,7 +262,7 @@ class PostController extends Controller
                 if ($result) {
                     $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
                     $post_comment = Post::where('id', '=', $id)->first();
-                    $comments = comment::where('comment_post_id', '=', $id)->get();
+                    $comments = comment::where('post_id', '=', $id)->get();
                     $replycomments = replycomment::where('post_id', '=', $id)->get();
                     $rereplycomments = rereplycomment::where('post_id', '=', $id)->get();
                     $likes = postlike::where('like_post_id', '=', $id)->get();
@@ -283,7 +298,7 @@ class PostController extends Controller
                 if ($result) {
                     $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
                     $post_comment = Post::where('id', '=', $id)->first();
-                    $comments = comment::where('comment_post_id', '=', $id)->get();
+                    $comments = comment::where('post_id', '=', $id)->get();
                     $replycomments = replycomment::where('post_id', '=', $id)->get();
                     $rereplycomments = rereplycomment::where('post_id', '=', $id)->get();
                     $likes = postlike::where('like_post_id', '=', $id)->get();
@@ -302,7 +317,7 @@ class PostController extends Controller
                 if ($result) {
                     $data = User::all()->where('id', '=', Session()->get('loginId'))->first();
                     $post_comment = Post::where('id', '=', $id)->first();
-                    $comments = comment::where('comment_post_id', '=', $id)->get();
+                    $comments = comment::where('post_id', '=', $id)->get();
                     $replycomments = replycomment::where('post_id', '=', $id)->get();
                     $rereplycomments = rereplycomment::where('post_id', '=', $id)->get();
                     $likes = postlike::where('like_post_id', '=', $id)->get();
